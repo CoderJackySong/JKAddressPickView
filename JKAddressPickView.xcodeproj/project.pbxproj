@@ -15,6 +15,12 @@
 		4C752C4F20D23FFB008F6FB6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C752C4E20D23FFB008F6FB6 /* main.m */; };
 		4C752C5920D23FFC008F6FB6 /* JKAddressPickViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C752C5820D23FFC008F6FB6 /* JKAddressPickViewTests.m */; };
 		4C752C6420D23FFC008F6FB6 /* JKAddressPickViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C752C6320D23FFC008F6FB6 /* JKAddressPickViewUITests.m */; };
+		4C752C7420D24082008F6FB6 /* JKAddressPickView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C752C7220D24082008F6FB6 /* JKAddressPickView.m */; };
+		4C752C7720D24108008F6FB6 /* UIView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C752C7620D24108008F6FB6 /* UIView+Category.m */; };
+		4C752C7920D24263008F6FB6 /* area.json in Resources */ = {isa = PBXBuildFile; fileRef = 4C752C7820D24263008F6FB6 /* area.json */; };
+		4C752C7C20D24456008F6FB6 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C752C7B20D24456008F6FB6 /* UIColor+Hex.m */; };
+		4C752C8020D25BB3008F6FB6 /* JKAddressTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C752C7E20D25BB3008F6FB6 /* JKAddressTableViewCell.m */; };
+		4C752C8120D25BB3008F6FB6 /* JKAddressTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C752C7F20D25BB3008F6FB6 /* JKAddressTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +57,16 @@
 		4C752C5F20D23FFC008F6FB6 /* JKAddressPickViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JKAddressPickViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C752C6320D23FFC008F6FB6 /* JKAddressPickViewUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JKAddressPickViewUITests.m; sourceTree = "<group>"; };
 		4C752C6520D23FFC008F6FB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C752C7220D24082008F6FB6 /* JKAddressPickView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JKAddressPickView.m; sourceTree = "<group>"; };
+		4C752C7320D24082008F6FB6 /* JKAddressPickView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JKAddressPickView.h; sourceTree = "<group>"; };
+		4C752C7520D24108008F6FB6 /* UIView+Category.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Category.h"; sourceTree = "<group>"; };
+		4C752C7620D24108008F6FB6 /* UIView+Category.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Category.m"; sourceTree = "<group>"; };
+		4C752C7820D24263008F6FB6 /* area.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = area.json; sourceTree = "<group>"; };
+		4C752C7A20D24456008F6FB6 /* UIColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
+		4C752C7B20D24456008F6FB6 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
+		4C752C7D20D25BB3008F6FB6 /* JKAddressTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JKAddressTableViewCell.h; sourceTree = "<group>"; };
+		4C752C7E20D25BB3008F6FB6 /* JKAddressTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JKAddressTableViewCell.m; sourceTree = "<group>"; };
+		4C752C7F20D25BB3008F6FB6 /* JKAddressTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JKAddressTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +117,7 @@
 		4C752C3E20D23FF9008F6FB6 /* JKAddressPickView */ = {
 			isa = PBXGroup;
 			children = (
+				4C752C7120D24045008F6FB6 /* JKAddressPickView */,
 				4C752C3F20D23FF9008F6FB6 /* AppDelegate.h */,
 				4C752C4020D23FFA008F6FB6 /* AppDelegate.m */,
 				4C752C4220D23FFA008F6FB6 /* ViewController.h */,
@@ -130,6 +147,23 @@
 				4C752C6520D23FFC008F6FB6 /* Info.plist */,
 			);
 			path = JKAddressPickViewUITests;
+			sourceTree = "<group>";
+		};
+		4C752C7120D24045008F6FB6 /* JKAddressPickView */ = {
+			isa = PBXGroup;
+			children = (
+				4C752C7820D24263008F6FB6 /* area.json */,
+				4C752C7320D24082008F6FB6 /* JKAddressPickView.h */,
+				4C752C7220D24082008F6FB6 /* JKAddressPickView.m */,
+				4C752C7520D24108008F6FB6 /* UIView+Category.h */,
+				4C752C7620D24108008F6FB6 /* UIView+Category.m */,
+				4C752C7A20D24456008F6FB6 /* UIColor+Hex.h */,
+				4C752C7B20D24456008F6FB6 /* UIColor+Hex.m */,
+				4C752C7D20D25BB3008F6FB6 /* JKAddressTableViewCell.h */,
+				4C752C7E20D25BB3008F6FB6 /* JKAddressTableViewCell.m */,
+				4C752C7F20D25BB3008F6FB6 /* JKAddressTableViewCell.xib */,
+			);
+			path = JKAddressPickView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,8 +269,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C752C8120D25BB3008F6FB6 /* JKAddressTableViewCell.xib in Resources */,
 				4C752C4C20D23FFB008F6FB6 /* LaunchScreen.storyboard in Resources */,
 				4C752C4920D23FFB008F6FB6 /* Assets.xcassets in Resources */,
+				4C752C7920D24263008F6FB6 /* area.json in Resources */,
 				4C752C4720D23FFA008F6FB6 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -262,9 +298,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C752C7420D24082008F6FB6 /* JKAddressPickView.m in Sources */,
+				4C752C7C20D24456008F6FB6 /* UIColor+Hex.m in Sources */,
 				4C752C4420D23FFA008F6FB6 /* ViewController.m in Sources */,
 				4C752C4F20D23FFB008F6FB6 /* main.m in Sources */,
+				4C752C7720D24108008F6FB6 /* UIView+Category.m in Sources */,
 				4C752C4120D23FFA008F6FB6 /* AppDelegate.m in Sources */,
+				4C752C8020D25BB3008F6FB6 /* JKAddressTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "JKAddressPickView.h"
 
-@interface ViewController ()
+@interface ViewController ()<JKAddressPickViewDelegate>
+
+@property (weak, nonatomic) IBOutlet UITextField *textField;
 
 @end
 
@@ -16,8 +19,21 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+
 }
+
+- (IBAction)addressPickAction:(id)sender {
+    JKAddressPickView *addressPickView = [[JKAddressPickView alloc] initAddressPickViewWithContentHeight:468.0];
+    addressPickView.delegate = self;
+    [addressPickView show];
+    
+}
+
+#pragma mark - AddressPickViewDelegate
+- (void)addressPickViewClicked:(NSString *)placeString{
+    self.textField.text = placeString;
+}
+
 
 
 - (void)didReceiveMemoryWarning {
