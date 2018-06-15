@@ -36,7 +36,7 @@ static NSString *const CellID = @"CellID";
 @property(nonatomic,strong)NSArray *listArray;
 @property(nonatomic,strong)NSDictionary *localDataDic;
 @property(nonatomic,strong)UIView *movingline;
-@property(nonatomic,strong)NSMutableArray *placeArray;
+@property(nonatomic,strong)NSMutableArray *titlePlaceArray;
 @property(nonatomic,assign)CGFloat contentHeight;
 
 @end
@@ -52,11 +52,11 @@ static NSString *const CellID = @"CellID";
     return _listArray;
 }
 
-- (NSMutableArray *)placeArray{
-    if (!_placeArray) {
-        _placeArray = [[NSMutableArray alloc] init];
+- (NSMutableArray *)titlePlaceArray{
+    if (!_titlePlaceArray) {
+        _titlePlaceArray = [[NSMutableArray alloc] init];
     }
-    return _placeArray;
+    return _titlePlaceArray;
 }
 
 - (NSDictionary *)localDataDic{
@@ -145,8 +145,8 @@ static NSString *const CellID = @"CellID";
             if (tag >= index) {
                 [button removeFromSuperview];
                 button = nil;
-                if (self.placeArray.count > index) {
-                    [self.placeArray removeObjectAtIndex:index];
+                if (self.titlePlaceArray.count > index) {
+                    [self.titlePlaceArray removeObjectAtIndex:index];
                 }
             }
         }
@@ -159,13 +159,13 @@ static NSString *const CellID = @"CellID";
         selectedBtn.width = preWidth;
         [selectedBtn setTitle:selectedPlace.name forState:UIControlStateNormal];
         currentX = CGRectGetMaxX(selectedBtn.frame) + 30;
-        [self.placeArray addObject:selectedPlace];
+        [self.titlePlaceArray insertObject:selectedPlace atIndex:selectedBtn.tag - ExtraTag];
     }
     if (index >= MaxLevel) {
         [self movinglineAnimationWithSelectedButton:selectedBtn];
         if(self.delegate && [self.delegate respondsToSelector:@selector(addressPickViewClicked:)]){
             NSMutableString * mStr = [[NSMutableString alloc] init];
-            for (Place *place in self.placeArray) {
+            for (Place *place in self.titlePlaceArray) {
                 [mStr appendString:place.name];
             }
             [self.delegate addressPickViewClicked:mStr];
@@ -218,9 +218,6 @@ static NSString *const CellID = @"CellID";
         selectedBtn = button;
         [self movinglineAnimationWithSelectedButton:button];
         NSInteger index = button.tag - ExtraTag;
-        if (self.placeArray.count <= index) {
-            return;
-        }
         switch (index) {
             case 0:{
                 self.listArray = self.localDataDic[@"provinceList"];
@@ -228,7 +225,7 @@ static NSString *const CellID = @"CellID";
             }
                 break;
             case 1:{
-                 Place *place = self.placeArray[index - 1];
+                 Place *place = self.titlePlaceArray[index - 1];
                 NSDictionary *provinceDic = self.localDataDic[@"provinceDict"];
                 NSDictionary *cityDic = provinceDic[place.ID];
                 self.listArray = cityDic[@"cities"];
@@ -236,7 +233,7 @@ static NSString *const CellID = @"CellID";
             }
                 break;
             case 2:{
-                Place *place = self.placeArray[index - 1];
+                Place *place = self.titlePlaceArray[index - 1];
                 NSDictionary *provinceDic = self.localDataDic[@"cityDict"];
                 NSDictionary *cityDic = provinceDic[place.ID];
                 self.listArray = cityDic[@"districts"];
@@ -328,8 +325,8 @@ static NSString *const CellID = @"CellID";
     cell.name = self.listArray[indexPath.row][1];
     cell.cellSelected = NO;
     NSInteger index = selectedBtn.tag - ExtraTag;
-    if (self.placeArray.count > index) {
-        Place *place = self.placeArray[index];
+    if (self.titlePlaceArray.count > index) {
+        Place *place = self.titlePlaceArray[index];
         if ([place.name isEqualToString:cell.name]) {
             cell.cellSelected = YES;
             cellSelectedIndex = indexPath.row;
@@ -345,13 +342,13 @@ static NSString *const CellID = @"CellID";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self selectedCellIndexPath:indexPath]; //先选中再刷新数据
     [self addTitleButtonAndReloadData:indexPath];
-    cellSelectedIndex = -1;
+    cellSelectedIndex = -1; //刷新后cellSelectedIndex设为-1
 }
 
 - (void)selectedCellIndexPath:(NSIndexPath *)indexPath{
     JKAddressTableViewCell *currentCell = [self.tableView cellForRowAtIndexPath:indexPath];
     if (cellSelectedIndex != indexPath.row ) {
-        JKAddressTableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];
+        JKAddressTableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:cellSelectedIndex inSection:0]];
         selectedCell.cellSelected = NO;
         currentCell.cellSelected = YES;
         cellSelectedIndex = indexPath.row;

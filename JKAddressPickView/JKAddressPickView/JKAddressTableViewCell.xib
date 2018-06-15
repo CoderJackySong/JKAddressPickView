@@ -24,8 +24,8 @@
                         <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="selected" translatesAutoresizingMaskIntoConstraints="NO" id="Emf-yI-iQ7">
-                        <rect key="frame" x="83" y="12" width="20" height="20"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_city_ mark" translatesAutoresizingMaskIntoConstraints="NO" id="Emf-yI-iQ7">
+                        <rect key="frame" x="83" y="10" width="24" height="24"/>
                     </imageView>
                 </subviews>
                 <constraints>
@@ -42,6 +42,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="selected" width="20" height="20"/>
+        <image name="icon_city_ mark" width="24" height="24"/>
     </resources>
 </document>
