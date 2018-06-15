@@ -8,27 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol JKAddressPickViewDelegate <NSObject>
-
--(void)addressPickViewClicked:(NSString *)placeString;
-
-
-@end
-
-
-@interface Place:NSObject
-
-@property(nonatomic,copy)NSString *ID;
-@property(nonatomic,copy)NSString *name;
-
-@end
-
-
 @interface JKAddressPickView : UIView
 
-@property(nonatomic,weak)id<JKAddressPickViewDelegate>delegate;
-
-- (instancetype)initAddressPickViewWithContentHeight:(CGFloat)height;
+- (instancetype)initWithContentHeight:(CGFloat)height completion:(void(^)(NSString *addressString))completion;
 
 - (void)show;
 

@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "JKAddressPickView.h"
 
-@interface ViewController ()<JKAddressPickViewDelegate>
+@interface ViewController ()
 
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 
@@ -23,17 +23,12 @@
 }
 
 - (IBAction)addressPickAction:(id)sender {
-    JKAddressPickView *addressPickView = [[JKAddressPickView alloc] initAddressPickViewWithContentHeight:468.0];
-    addressPickView.delegate = self;
+    __weak typeof(self) weakSelf = self;
+    JKAddressPickView *addressPickView = [[JKAddressPickView alloc] initWithContentHeight:468.0 completion:^(NSString *addressString) {
+        weakSelf.textField.text = addressString;
+    }];
     [addressPickView show];
-    
 }
-
-#pragma mark - AddressPickViewDelegate
-- (void)addressPickViewClicked:(NSString *)placeString{
-    self.textField.text = placeString;
-}
-
 
 
 - (void)didReceiveMemoryWarning {

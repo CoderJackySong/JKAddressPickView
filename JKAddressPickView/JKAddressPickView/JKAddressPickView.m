@@ -17,6 +17,15 @@
 #define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
 
 static NSString *const CellID = @"CellID";
+typedef void (^CompletionBlock)(NSString *addressString);
+
+
+@interface Place:NSObject
+
+@property(nonatomic,copy)NSString *ID;
+@property(nonatomic,copy)NSString *name;
+
+@end
 
 @implementation Place
 
@@ -24,7 +33,7 @@ static NSString *const CellID = @"CellID";
 
 
 @interface JKAddressPickView()<UITableViewDataSource,UITableViewDelegate>{
-
+    
     UIButton *selectedBtn;
     NSInteger cellSelectedIndex;
 }
@@ -38,6 +47,7 @@ static NSString *const CellID = @"CellID";
 @property(nonatomic,strong)UIView *movingline;
 @property(nonatomic,strong)NSMutableArray *titlePlaceArray;
 @property(nonatomic,assign)CGFloat contentHeight;
+@property (nonatomic,copy) CompletionBlock completionBlock;
 
 @end
 
@@ -66,12 +76,13 @@ static NSString *const CellID = @"CellID";
     return _localDataDic;
 }
 
-- (instancetype)initAddressPickViewWithContentHeight:(CGFloat)height{
+- (instancetype)initWithContentHeight:(CGFloat)height completion:(void(^)(NSString *addressString))completion{
     if (self == [super init]) {
         self.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         self.backgroundColor = [UIColor colorWithHexString:@"#333333" alpha:0.4];
         _contentHeight = height;
         cellSelectedIndex = -1;
+        _completionBlock = completion;
         [self setupCover];
         [self setupContentSubViews];
     }
@@ -128,8 +139,8 @@ static NSString *const CellID = @"CellID";
 }
 
 - (void)setupTableView{
-   _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 75, SCREEN_WIDTH, _contentHeight - 75) style:UITableViewStylePlain];
-     [_addressView addSubview:_tableView];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 75, SCREEN_WIDTH, _contentHeight - 75) style:UITableViewStylePlain];
+    [_addressView addSubview:_tableView];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -163,12 +174,12 @@ static NSString *const CellID = @"CellID";
     }
     if (index >= MaxLevel) {
         [self movinglineAnimationWithSelectedButton:selectedBtn];
-        if(self.delegate && [self.delegate respondsToSelector:@selector(addressPickViewClicked:)]){
+        if(self.completionBlock){
             NSMutableString * mStr = [[NSMutableString alloc] init];
             for (Place *place in self.titlePlaceArray) {
                 [mStr appendString:place.name];
             }
-            [self.delegate addressPickViewClicked:mStr];
+            self.completionBlock(mStr);
             [self dismiss];
         }
         return;
@@ -225,7 +236,7 @@ static NSString *const CellID = @"CellID";
             }
                 break;
             case 1:{
-                 Place *place = self.titlePlaceArray[index - 1];
+                Place *place = self.titlePlaceArray[index - 1];
                 NSDictionary *provinceDic = self.localDataDic[@"provinceDict"];
                 NSDictionary *cityDic = provinceDic[place.ID];
                 self.listArray = cityDic[@"cities"];
