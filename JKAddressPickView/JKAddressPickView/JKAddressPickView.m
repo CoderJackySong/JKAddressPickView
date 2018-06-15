@@ -163,7 +163,7 @@ typedef void (^CompletionBlock)(NSString *addressString);
         }
     }
     UIFont *titleFont = [UIFont boldSystemFontOfSize:14];
-    CGFloat  currentX = 15;
+    CGFloat  currentX = 30;
     if (selectedBtn) {
         selectedBtn.selected = NO;
         CGFloat preWidth = [self sizeOfString:selectedPlace.name font:titleFont].width;
