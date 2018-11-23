@@ -1,6 +1,5 @@
 # JKAddressPickView
-#### 最近项目中有个类似京东所在地区选择器的功能，然后自己就写了一个类似的功能。
- 
+
 ### 1.UI效果如下图:
 ![效果图1](https://upload-images.jianshu.io/upload_images/3107189-eb4e6efd071a8737.gif?imageMogr2/auto-orient/strip)
 
