@@ -23,9 +23,9 @@
 }
 
 - (IBAction)addressPickAction:(id)sender {
-    __weak typeof(self) weakSelf = self;
-    JKAddressPickView *addressPickView = [[JKAddressPickView alloc] initWithContentHeight:468.0 completion:^(NSString *addressString) {
-        weakSelf.textField.text = addressString;
+    __weak typeof(self)weakSelf = self;
+    JKAddressPickView *addressPickView = [[JKAddressPickView alloc] initAddressPickViewWithCompletion:^(Place *province,Place *city,Place *district) {
+        weakSelf.textField.text = [NSString stringWithFormat:@"%@%@%@",province.name,city.name,district.name];
     }];
     [addressPickView show];
 }

@@ -8,9 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+@interface Place:NSObject
+
+@property(nonatomic,copy)NSString *code;
+@property(nonatomic,copy)NSString *name;
+
+@end
+
+
 @interface JKAddressPickView : UIView
 
-- (instancetype)initWithContentHeight:(CGFloat)height completion:(void(^)(NSString *addressString))completion;
+- (instancetype)initAddressPickViewWithCompletion:(void(^)(Place *province,Place *city,Place *district))completion;
 
 - (void)show;
 

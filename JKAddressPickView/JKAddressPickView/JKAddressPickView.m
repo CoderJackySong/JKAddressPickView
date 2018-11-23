@@ -16,16 +16,7 @@
 #define SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
 #define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
 
-static NSString *const CellID = @"CellID";
-typedef void (^CompletionBlock)(NSString *addressString);
-
-
-@interface Place:NSObject
-
-@property(nonatomic,copy)NSString *ID;
-@property(nonatomic,copy)NSString *name;
-
-@end
+typedef void (^CompletionBlock)(Place *province,Place *city,Place *district);
 
 @implementation Place
 
@@ -33,9 +24,8 @@ typedef void (^CompletionBlock)(NSString *addressString);
 
 
 @interface JKAddressPickView()<UITableViewDataSource,UITableViewDelegate>{
-    
+    CGFloat defaultHeight;
     UIButton *selectedBtn;
-    NSInteger cellSelectedIndex;
 }
 
 @property(nonatomic,strong)UIView *addressView;
@@ -46,7 +36,6 @@ typedef void (^CompletionBlock)(NSString *addressString);
 @property(nonatomic,strong)NSDictionary *localDataDic;
 @property(nonatomic,strong)UIView *movingline;
 @property(nonatomic,strong)NSMutableArray *titlePlaceArray;
-@property(nonatomic,assign)CGFloat contentHeight;
 @property (nonatomic,copy) CompletionBlock completionBlock;
 
 @end
@@ -76,36 +65,31 @@ typedef void (^CompletionBlock)(NSString *addressString);
     return _localDataDic;
 }
 
-- (instancetype)initWithContentHeight:(CGFloat)height completion:(void(^)(NSString *addressString))completion{
+- (instancetype)initAddressPickViewWithCompletion:(void(^)(Place *province,Place *district ,Place *city))completion{
     if (self == [super init]) {
-        self.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        self.backgroundColor = [UIColor colorWithHexString:@"#333333" alpha:0.4];
-        _contentHeight = height;
-        cellSelectedIndex = -1;
+        [self initSubViews];
         _completionBlock = completion;
-        [self setupCover];
-        [self setupContentSubViews];
     }
     return self;
 }
 
-- (void)setupCover{
+- (void)initSubViews{
+    defaultHeight = 468 * SCREEN_HEIGHT/667.0;
     _cover = [UIButton buttonWithType:UIButtonTypeCustom];
     _cover.backgroundColor = [UIColor clearColor];
     _cover.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    [_cover addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventAllTouchEvents];
+    [_cover addTarget:self action:@selector(tapBtnAndcancelBtnClick) forControlEvents:UIControlEventAllTouchEvents];
     [self addSubview:_cover];
-}
-
-- (void)setupContentSubViews{
+    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    self.backgroundColor = [UIColor colorWithHexString:@"#333333" alpha:0.4];
     _addressView = [[UIView alloc] init];
     [self addSubview:_addressView];
-    _addressView.frame = CGRectMake(0, SCREEN_HEIGHT,SCREEN_WIDTH, _contentHeight);
+    _addressView.frame = CGRectMake(0, SCREEN_HEIGHT,SCREEN_WIDTH, defaultHeight);
     _addressView.backgroundColor = [UIColor whiteColor];
     UILabel *titleLabel = [[UILabel alloc] init];
     [_addressView addSubview:titleLabel];
     titleLabel.text = @"配送至";
-    titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    titleLabel.font = [UIFont systemFontOfSize:15];
     titleLabel.textColor = [UIColor colorWithHexString:@"#999999"];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     [titleLabel sizeToFit];
@@ -115,10 +99,10 @@ typedef void (^CompletionBlock)(NSString *addressString);
     [_addressView addSubview:cancelBtn];
     cancelBtn.frame = CGRectMake(SCREEN_WIDTH - 35, 15, 20, 20);
     [cancelBtn addTarget:self action:@selector(tapBtnAndcancelBtnClick) forControlEvents:UIControlEventTouchUpInside];
-    [cancelBtn setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
+    [cancelBtn setImage:[UIImage imageNamed:@"profile_exchange_close"] forState:UIControlStateNormal];
     [self setupScrollView];
     [self addTitleButtonWithIndex:0 selectedPlace:nil];
-    [self setupTableView];
+    [self setupContentTableView];
 }
 
 - (void)setupScrollView{
@@ -130,7 +114,7 @@ typedef void (^CompletionBlock)(NSString *addressString);
     _titleScrollView.pagingEnabled = YES;
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, _titleScrollView.height - 1.0, SCREEN_WIDTH, 0.5)];
     [_titleScrollView addSubview:line];
-    line.backgroundColor = [UIColor colorWithHexString:@"#eeeeee"];
+    line.backgroundColor = [UIColor colorWithHexString:@"#eeeeee"];;
     _movingline = [[UIView alloc] init];
     [line addSubview:_movingline];
     _movingline.backgroundColor = [UIColor colorWithHexString:@"#f56626"] ;
@@ -138,16 +122,15 @@ typedef void (^CompletionBlock)(NSString *addressString);
     _movingline.centerY =  line.height * 0.5;
 }
 
-- (void)setupTableView{
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 75, SCREEN_WIDTH, _contentHeight - 75) style:UITableViewStylePlain];
-    [_addressView addSubview:_tableView];
+- (void)setupContentTableView{
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 75, SCREEN_WIDTH, defaultHeight - 75) style:UITableViewStylePlain];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [_tableView registerNib:[UINib nibWithNibName:NSStringFromClass([JKAddressTableViewCell class]) bundle:nil] forCellReuseIdentifier:CellID];
+    [_addressView addSubview:_tableView];
 }
 
-//添加titleButton
+//添加可以点击的title
 - (void)addTitleButtonWithIndex:(NSInteger)index selectedPlace:(Place *)selectedPlace{
     for (UIView *subView in self.titleScrollView.subviews) {
         if ([subView isKindOfClass:[UIButton class]]) {
@@ -162,8 +145,8 @@ typedef void (^CompletionBlock)(NSString *addressString);
             }
         }
     }
-    UIFont *titleFont = [UIFont boldSystemFontOfSize:14];
-    CGFloat  currentX = 30;
+    UIFont *titleFont = [UIFont systemFontOfSize:14];
+    CGFloat  currentX = 15;
     if (selectedBtn) {
         selectedBtn.selected = NO;
         CGFloat preWidth = [self sizeOfString:selectedPlace.name font:titleFont].width;
@@ -175,11 +158,19 @@ typedef void (^CompletionBlock)(NSString *addressString);
     if (index >= MaxLevel) {
         [self movinglineAnimationWithSelectedButton:selectedBtn];
         if(self.completionBlock){
-            NSMutableString * mStr = [[NSMutableString alloc] init];
-            for (Place *place in self.titlePlaceArray) {
-                [mStr appendString:place.name];
+            Place *provnice;
+            Place *city;
+            Place *district;
+            if (self.titlePlaceArray.count >= 1) {
+                provnice = self.titlePlaceArray[0];
             }
-            self.completionBlock(mStr);
+            if (self.titlePlaceArray.count >= 2) {
+                city = self.titlePlaceArray[1];
+            }
+            if (self.titlePlaceArray.count >= 3) {
+                district = self.titlePlaceArray[2];
+            }
+            self.completionBlock(provnice, city,district);
             [self dismiss];
         }
         return;
@@ -208,10 +199,10 @@ typedef void (^CompletionBlock)(NSString *addressString);
 
 - (void)movinglineAnimationWithSelectedButton:(UIButton *)button{
     [UIView animateWithDuration:0.3 animations:^{
-        self.movingline.x = button.x;
-        self.movingline.width = button.width;
+        self->_movingline.x = button.x;
+        self->_movingline.width = button.width;
     } completion:^(BOOL finished) {
-        CGFloat MaxX = CGRectGetMaxX(self.movingline.frame) + 10;
+        CGFloat MaxX = CGRectGetMaxX(self->_movingline.frame) + 10;
         CGFloat height = 40;
         if (MaxX > SCREEN_WIDTH) {
             self.titleScrollView.contentSize = CGSizeMake(MaxX, height);
@@ -220,7 +211,6 @@ typedef void (^CompletionBlock)(NSString *addressString);
         }
     }];
 }
-
 
 - (void)titleClicked:(UIButton *)button{
     if (selectedBtn != button) {
@@ -238,21 +228,20 @@ typedef void (^CompletionBlock)(NSString *addressString);
             case 1:{
                 Place *place = self.titlePlaceArray[index - 1];
                 NSDictionary *provinceDic = self.localDataDic[@"provinceDict"];
-                NSDictionary *cityDic = provinceDic[place.ID];
+                NSDictionary *cityDic = provinceDic[place.code];
                 self.listArray = cityDic[@"cities"];
                 [self refreshData];
             }
                 break;
             case 2:{
                 Place *place = self.titlePlaceArray[index - 1];
-                NSDictionary *provinceDic = self.localDataDic[@"cityDict"];
-                NSDictionary *cityDic = provinceDic[place.ID];
-                self.listArray = cityDic[@"districts"];
+                NSDictionary *cityDict = self.localDataDic[@"cityDict"];
+                NSDictionary *districtDic = cityDict[place.code];
+                self.listArray = districtDic[@"districts"];
                 [self refreshData];
             }
                 break;
             default:
-                
                 break;
         }
     }
@@ -272,7 +261,7 @@ typedef void (^CompletionBlock)(NSString *addressString);
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
     [window addSubview:self];
     [UIView animateWithDuration:0.5 animations:^{
-        self.addressView.y = SCREEN_HEIGHT - self.contentHeight;
+        self.addressView.y = SCREEN_HEIGHT - self->defaultHeight;
         self.localDataDic = [self readLocalFile];
         self.listArray = self.localDataDic[@"provinceList"];
         [self refreshData];
@@ -332,17 +321,15 @@ typedef void (^CompletionBlock)(NSString *addressString);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    JKAddressTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellID forIndexPath:indexPath];
-    cell.name = self.listArray[indexPath.row][1];
-    cell.cellSelected = NO;
-    NSInteger index = selectedBtn.tag - ExtraTag;
-    if (self.titlePlaceArray.count > index) {
-        Place *place = self.titlePlaceArray[index];
-        if ([place.name isEqualToString:cell.name]) {
-            cell.cellSelected = YES;
-            cellSelectedIndex = indexPath.row;
-        }
+    static NSString *cellID = @"CellID";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.textLabel.font = [UIFont systemFontOfSize:13];
+        cell.textLabel.textColor = [UIColor colorWithHexString:@"#333333"];
     }
+    cell.textLabel.text = self.listArray[indexPath.row][1];
     return cell;
 }
 
@@ -351,28 +338,12 @@ typedef void (^CompletionBlock)(NSString *addressString);
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [self selectedCellIndexPath:indexPath]; //先选中再刷新数据
-    [self addTitleButtonAndReloadData:indexPath];
-    cellSelectedIndex = -1; //刷新后cellSelectedIndex设为-1
-}
-
-- (void)selectedCellIndexPath:(NSIndexPath *)indexPath{
-    JKAddressTableViewCell *currentCell = [self.tableView cellForRowAtIndexPath:indexPath];
-    if (cellSelectedIndex != indexPath.row ) {
-        JKAddressTableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:cellSelectedIndex inSection:0]];
-        selectedCell.cellSelected = NO;
-        currentCell.cellSelected = YES;
-        cellSelectedIndex = indexPath.row;
-    }
-}
-
-- (void)addTitleButtonAndReloadData:(NSIndexPath *)indexPath{
     NSInteger index = selectedBtn.tag - ExtraTag;
     NSInteger nextIndex = index + 1;
     NSString *title = self.listArray[indexPath.row][1];
     NSNumber *districtID = self.listArray[indexPath.row][0];
     Place *place = [[Place alloc] init];
-    place.ID = [districtID stringValue];
+    place.code = [districtID stringValue];
     place.name =title;
     switch (nextIndex) {
         case 1:{
