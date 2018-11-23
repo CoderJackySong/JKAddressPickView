@@ -8,7 +8,7 @@
 ![效果图2](https://upload-images.jianshu.io/upload_images/3107189-b9789103a52b0044.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ### 3.代码使用:
 ```
- __weak typeof(self)weakSelf = self;
+     __weak typeof(self)weakSelf = self;
     JKAddressPickView *addressPickView = [[JKAddressPickView alloc] initAddressPickViewWithCompletion:^(Place *province,Place *city,Place *district) {
         weakSelf.textField.text = [NSString stringWithFormat:@"%@%@%@",province.name,city.name,district.name];
     }];
